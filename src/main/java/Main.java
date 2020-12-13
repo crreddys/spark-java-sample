@@ -1,7 +1,9 @@
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.TimeoutException;
 
 import static spark.Spark.*;
 
@@ -37,6 +39,21 @@ public class Main {
                 outputStream.flush();
                 return response;
             }
+        });
+
+        get("/process-data", (request, response) -> {
+            try (RPCClient fibonacciRpc = new RPCClient()) {
+                for (int i = 0; i < 32; i++) {
+                    String i_str = Integer.toString(i);
+                    System.out.println(" [x] Requesting fib(" + i_str + ")");
+                    String res = fibonacciRpc.call(i_str);
+                    System.out.println(" [.] Got '" + res + "'");
+                }
+            } catch (IOException | TimeoutException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return "Data Processed";
         });
     }
 }
