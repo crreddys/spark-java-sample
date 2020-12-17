@@ -1,3 +1,7 @@
+import spark.Filter;
+import spark.Request;
+import spark.Response;
+
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
 import java.io.IOException;
@@ -13,6 +17,8 @@ public class Main {
         final SampleService service = new SampleServiceImp();
 
         port(8080);
+
+        enableCORS("*", "*", "*");
 
         get("/hello", (request, response) -> {
             return "Hello World";
@@ -54,6 +60,17 @@ public class Main {
             }
 
             return "Data Processed";
+        });
+    }
+
+    static void enableCORS(final String origin, final String methods, final String headers) {
+        before(new Filter() {
+            @Override
+            public void handle(Request request, Response response) {
+                response.header("Access-Control-Allow-Origin", origin);
+                response.header("Access-Control-Request-Method", methods);
+                response.header("Access-Control-Allow-Headers", headers);
+            }
         });
     }
 }
