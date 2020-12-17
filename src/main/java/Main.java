@@ -1,7 +1,3 @@
-import spark.Filter;
-import spark.Request;
-import spark.Response;
-
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
 import java.io.IOException;
@@ -64,13 +60,10 @@ public class Main {
     }
 
     static void enableCORS(final String origin, final String methods, final String headers) {
-        before(new Filter() {
-            @Override
-            public void handle(Request request, Response response) {
-                response.header("Access-Control-Allow-Origin", origin);
-                response.header("Access-Control-Request-Method", methods);
-                response.header("Access-Control-Allow-Headers", headers);
-            }
+        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", origin);
+            response.header("Access-Control-Allow-Methods", methods);
+            response.header("Access-Control-Allow-Headers", headers);
         });
     }
 }
